@@ -9,7 +9,7 @@ PASSWORD_FIELD = "sign-password"
 LOG_IN_USER_NAME_FIELD = "loginusername"
 LOG_IN_PASSWORD_FIELD = "loginpassword"
 
-VALID_USERNAME = "pio4ehj7sm"
+VALID_USERNAME = "pio4ehj776"
 VALID_PASSWORD = "TestPassword123"
 
 INVALID_USERNAME = "invalid_user"
