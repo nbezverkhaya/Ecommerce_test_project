@@ -1,5 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from selenium import webdriver
-from config import BROWSER
+from utils.config import BROWSER
 
 def get_driver():
     if BROWSER == "chrome":

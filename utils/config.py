@@ -9,13 +9,13 @@ PASSWORD_FIELD = "sign-password"
 LOG_IN_USER_NAME_FIELD = "loginusername"
 LOG_IN_PASSWORD_FIELD = "loginpassword"
 
-VALID_USERNAME = "dfgfds1"
+VALID_USERNAME = "pio4ehj7sm"
 VALID_PASSWORD = "TestPassword123"
 
 INVALID_USERNAME = "invalid_user"
 INVALID_PASSWORD = "wrongpassword"
 
-SIGN_IN_BUTTON = "signin2"
+SIGN_IN_LINK = "signin2"
 SIGN_UP_BUTTON = "//button[text()='Sign up']"
 
 LOG_IN_LINK = "//a[text()='Log in']"

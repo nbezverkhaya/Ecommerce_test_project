@@ -1,63 +1,57 @@
-import time
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pytest
 from selenium.webdriver.common.by import By
-from browser import get_driver
-import config
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from utils.browser import get_driver
+from utils import config
+from Pages.base_page import HomePage
 
 @pytest.fixture(scope="function")
 def driver():
-    driver = get_driver()  # Використовуємо функцію get_driver()
+    driver = get_driver()
     driver.get(config.BASE_URL)
     driver.maximize_window()
     yield driver
     driver.quit()
 
 def test_positive_registration(driver):
-    driver.find_element(By.ID, config.SIGN_IN_BUTTON).click()
-    time.sleep(2)
+    home_page = HomePage(driver)
 
-    driver.find_element(By.ID, config.USER_NAME_FIELD).send_keys(config.VALID_USERNAME)
-    driver.find_element(By.ID, config.PASSWORD_FIELD).send_keys(config.VALID_PASSWORD)
-    driver.find_element(By.XPATH, config.SIGN_UP_BUTTON).click()
-    time.sleep(2)
+    home_page.open_sign_up()
+    home_page.sign_up(config.VALID_USERNAME, config.VALID_PASSWORD)
 
-    alert = driver.switch_to.alert
+    alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
     assert "Sign up successful" in alert.text
     alert.accept()
 
 def test_negative_registration(driver):
-    driver.find_element(By.ID, config.SIGN_IN_BUTTON).click()
-    time.sleep(2)
+    home_page = HomePage(driver)
 
-    driver.find_element(By.ID, config.USER_NAME_FIELD).send_keys(config.VALID_USERNAME)
-    driver.find_element(By.ID, config.PASSWORD_FIELD).send_keys(config.VALID_PASSWORD)
-    driver.find_element(By.XPATH, config.SIGN_UP_BUTTON).click()
-    time.sleep(2)
+    home_page.open_sign_up()
+    home_page.sign_up(config.VALID_USERNAME, config.VALID_PASSWORD)
 
-    alert = driver.switch_to.alert
+    alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
     assert "This user already exist." in alert.text
     alert.accept()
 
 def test_positive_login(driver):
-    driver.find_element(By.XPATH, config.LOG_IN_LINK).click()
-    time.sleep(2)
+    home_page = HomePage(driver)
+    home_page.open_login()
+    home_page.login(config.VALID_USERNAME, config.VALID_PASSWORD)
 
-    driver.find_element(By.ID, config.LOG_IN_USER_NAME_FIELD).send_keys(config.VALID_USERNAME)
-    driver.find_element(By.ID, config.LOG_IN_PASSWORD_FIELD).send_keys(config.VALID_PASSWORD)
-    driver.find_element(By.XPATH, config.LOG_IN_BUTTON).click()
-    time.sleep(3)
-
+    WebDriverWait(driver, 5).until(EC.text_to_be_present_in_element((By.ID, "nameofuser"), f"Welcome {config.VALID_USERNAME}"))
     assert driver.find_element(By.ID, "nameofuser").text == f"Welcome {config.VALID_USERNAME}"
 
 def test_negative_login(driver):
-    driver.find_element(By.XPATH, config.LOG_IN_LINK).click()
-    time.sleep(2)
+    home_page = HomePage(driver)
 
-    driver.find_element(By.ID, config.LOG_IN_USER_NAME_FIELD).send_keys(config.INVALID_USERNAME)
-    driver.find_element(By.ID, config.LOG_IN_PASSWORD_FIELD).send_keys(config.INVALID_PASSWORD)
-    driver.find_element(By.XPATH, config.LOG_IN_BUTTON).click()
-    time.sleep(2)
+    home_page.open_login()
+    home_page.login(config.INVALID_USERNAME, config.INVALID_PASSWORD)
 
-    alert = driver.switch_to.alert
+    alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
     assert "Wrong password." in alert.text or "User does not exist." in alert.text
     alert.accept()

@@ -1,12 +1,15 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from browser import get_driver
-
-import config
-
+from utils.browser import get_driver
+from utils import config
+from Pages.base_page import HomePage
+from Pages.cart_page import CartPage
 @pytest.fixture(scope="function")
 def driver():
     driver = get_driver()
@@ -15,59 +18,29 @@ def driver():
     yield driver
     driver.quit()
 
-@pytest.fixture(scope="function")
-def driver_cart():
-    driver = get_driver()
-    driver.get(config.CART_URL)
-    driver.maximize_window()
-    yield driver
-    driver.quit()
-
 def test_login_and_add_to_cart(driver):
-    # first_test
+    home_page = HomePage(driver)
+    cart_page = CartPage(driver)
+
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, config.LOG_IN_LINK)))
-    login_button = driver.find_element(By.XPATH, config.LOG_IN_LINK)
-    login_button.click()
-    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, config.LOG_IN_USER_NAME_FIELD)))
-    email_field = driver.find_element(By.ID, config.LOG_IN_USER_NAME_FIELD)
-    email_field.send_keys(config.USER_NAME_2)
-    password_field = driver.find_element(By.ID, config.LOG_IN_PASSWORD_FIELD)
-    password_field.send_keys(config.PASSWORD_2)
-    login_submit_button = driver.find_element(By.XPATH, config.LOG_IN_BUTTON)
-    login_submit_button.click()
+    home_page.open_login()
+    home_page.login(config.USER_NAME_2, config.PASSWORD_2)
 
-    WebDriverWait(driver, 10).until(
-        EC.text_to_be_present_in_element((By.ID, "nameofuser"), "Welcome"))
+    WebDriverWait(driver, 10).until(EC.text_to_be_present_in_element((By.ID, "nameofuser"), f"Welcome {config.USER_NAME_2}"))
     username_display = driver.find_element(By.ID, "nameofuser").text
-    assert f"Welcome {config.USER_NAME_2}" in username_display, f"Expected username text not found: {username_display}"
+    assert f"Welcome {config.USER_NAME_2}" in username_display
 
-    # second_test
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, config.PRODUCT_1)))
-    element_1 = driver.find_element(By.LINK_TEXT, config.PRODUCT_1)
-    element_1.click()
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, config.ADD_TO_CART_BUTTON)))
-    add_to_cart_button = driver.find_element(By.CSS_SELECTOR, config.ADD_TO_CART_BUTTON)
-    add_to_cart_button.click()
-    WebDriverWait(driver, 3).until(EC.alert_is_present()).accept()
-
+    home_page.add_product_to_cart(config.PRODUCT_1)
     driver.get(config.BASE_URL)
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, config.PRODUCT_2)))
-    element_2 = driver.find_element(By.LINK_TEXT, config.PRODUCT_2)
-    element_2.click()
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, config.ADD_TO_CART_BUTTON)))
-    add_to_cart_button = driver.find_element(By.CSS_SELECTOR, config.ADD_TO_CART_BUTTON)
-    add_to_cart_button.click()
-    WebDriverWait(driver, 3).until(EC.alert_is_present()).accept()
+    home_page.add_product_to_cart(config.PRODUCT_2)
 
-    # third_test
-    driver.get(config.CART_URL)
+    cart_page.open_cart()
     WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, config.ITEMS_IN_THE_CART)))
-    items = driver.find_elements(By.CSS_SELECTOR, config.ITEMS_IN_THE_CART)
-
-    item_names = [item.find_element(By.XPATH, config.ITEM_NAMES).text for item in items]
-    print(f"Items in cart: {item_names}")
-    assert config.PRODUCT_1 in item_names, f"{config.PRODUCT_1} is missing from cart"
-    assert config.PRODUCT_2 in item_names, f"{config.PRODUCT_2} is missing from cart"
+    items_in_cart = cart_page.get_cart_items()
+    WebDriverWait(driver, 10).until(lambda d: config.PRODUCT_1 in items_in_cart and config.PRODUCT_2 in items_in_cart)
+    assert config.PRODUCT_1 in items_in_cart
+    assert config.PRODUCT_2 in items_in_cart
 
 # Why were the three tests merged into one?
 #
