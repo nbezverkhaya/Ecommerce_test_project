@@ -1,4 +1,4 @@
-BROWSER = "safari"
+BROWSER = "chrome"
 
 BASE_URL = "https://www.demoblaze.com/"
 CART_URL = "https://www.demoblaze.com/cart.html"
@@ -9,7 +9,7 @@ PASSWORD_FIELD = "sign-password"
 LOG_IN_USER_NAME_FIELD = "loginusername"
 LOG_IN_PASSWORD_FIELD = "loginpassword"
 
-VALID_USERNAME = "pio4ehj776"
+VALID_USERNAME = "pioname1"
 VALID_PASSWORD = "TestPassword123"
 
 INVALID_USERNAME = "invalid_user"
@@ -32,3 +32,19 @@ ITEM_NAMES = "./td[2]"
 USER_NAME_2 = "fffggg@h.com"
 PASSWORD_2 = "123era"
 
+# test_3_checkout
+PLACE_ORDER_BUTTON = "//button[contains(text(), 'Place Order')]"
+PLACE_ORDER_NAME = "name"
+PLACE_ORDER_COUNTRY = "country"
+PLACE_ORDER_CITY = "city"
+PLACE_ORDER_CARD = "card"
+PLACE_ORDER_MONTH = "month"
+PLACE_ORDER_YEAR = "year"
+PURCHASE_BUTTON = "//button[contains(text(), 'Purchase')]"
+
+PURCHASE_VALUE_NAME = "John Doe"
+PURCHASE_VALUE_COUNTRY = "USA"
+PURCHASE_VALUE_CITY = "New York"
+PURCHASE_VALUE_CARD = "4111111111111111"
+PURCHASE_VALUE_MONTH = "12"
+PURCHASE_VALUE_YEAR = "2026"
