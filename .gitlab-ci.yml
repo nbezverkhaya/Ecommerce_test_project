@@ -1,0 +1,8 @@
+stages:
+  - test
+
+test-ui:
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - pytest --alluredir=reports
